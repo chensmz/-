@@ -1,0 +1,906 @@
+# Copyright (c) 2020-2023, SANYIMOE.
+# https://github.com/SANYIMOE/Quan_Shado_Conf
+# Last updated: 2023-05-14
+
+# This work is licensed under a modified Config License.
+# https://github.com/SANYIMOE/Quan_Shado_Conf/raw/master/LICENSE
+
+# 安装地址：https://quan-shado-conf.mojy.xyz/conf/stash.yaml
+# 启动前请先在[配置列表]->[可视化编辑]->[通用]中，设置[默认模式]为[Rule]，设置[日志等级]为[Info]
+# 您的机场订阅请在[配置列表]->[可视化编辑]中添加一个新的远程代理集
+# 去广告等脚本请先打开首页的MitM，安装并信任证书后即可
+# 机场订阅面板请配合BoxJS使用，BoxJS订阅地址：https://raw.githubusercontent.com/smartmimi/conf/master/boxjs/cookie.boxjs.json
+
+# DNS 服务器配置
+dns:
+  # 以下填写的 DNS 服务器将会被用来解析 DNS 服务的域名
+  # 仅填写 DNS 服务器的 IP 地址
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+    - 223.6.6.6
+    - 8.8.8.8
+    - 8.8.4.4
+    - 1.1.1.1
+    - 1.0.0.1
+    - 80.80.80.80
+    - 80.80.81.81
+    - system # 使用 iOS 系统 DNS
+
+  # 在以下列表的域名将不会被解析为 fake ip，这些域名相关的解析请求将会返回它们真实的 IP 地址
+  fake-ip-filter:
+    # Stun Services
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*.*.*'
+
+    # Google Voices
+    - 'lens.l.google.com'
+
+    # Nintendo Switch
+    - '*.n.n.srv.nintendo.net'
+
+    # PlayStation
+    - '+.stun.playstation.net'
+
+    # XBox
+    - 'xbox.*.*.microsoft.com'
+    - '*.*.xboxlive.com'
+
+    # Microsoft
+    - '*.msftncsi.com'
+    - '*.msftconnecttest.com'
+
+    # Bilibili CDN
+    - '*.mcdn.bilivideo.cn'
+
+    # 本地网路
+    - '*.localhost'
+    - '*.local'
+
+    # NTP服务
+    - time.*.com
+    - time.*.gov
+    - time.*.edu.cn
+    - time.*.apple.com
+    - time-ios.apple.com
+    - time1.*.com
+    - time2.*.com
+    - time3.*.com
+    - time4.*.com
+    - time5.*.com
+    - time6.*.com
+    - time7.*.com
+    - ntp.*.com
+    - ntp1.*.com
+    - ntp2.*.com
+    - ntp3.*.com
+    - ntp4.*.com
+    - ntp5.*.com
+    - ntp6.*.com
+    - ntp7.*.com
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - +.pool.ntp.org
+    - time1.cloud.tencent.com
+
+  # 支持 UDP / TCP / DoT / DoH 协议的 DNS 服务，可以指明具体的连接端口号。
+  # 所有 DNS 请求将会直接发送到服务器，不经过任何代理。
+  # Stash 会使用最先获得的解析记录回复 DNS 请求
+  nameserver:
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  - https://1.12.12.12/dns-query
+  - https://120.53.53.53/dns-query
+  - https://223.5.5.5/dns-query
+  - https://223.6.6.6/dns-query
+  - system # 使用 iOS 系统 DNS
+
+# HTTP引擎相关
+http:
+  # 强制使用 Stash 引擎以 HTTP 协议处理 TCP 连接
+  # 捕获后的连接可以使用高级功能，例如重写和脚本
+  force-http-engine:
+    # Sub-Store
+    - 'sub.store'
+
+    # BoxJS
+    - 'boxjs.com'
+    - 'boxjs.net'
+    - '*.boxjs.com'
+    - '*.boxjs.net'
+
+
+
+  # Stash打开HTTPS解密方法：
+  # 1.打开MitM开关
+  # 2.生成并安装证书
+  # 3.手机设置 - 通用 - 关于本机 - 证书信任设置 - 开启对应Stash证书信任。
+  # ----------
+  # 以 PKCS #12 编码的 CA 证书
+  #ca: ''
+  # 证书密码
+  #ca-passphrase: ''
+  # ----------
+  # Stash仅会解密hostname指定的域名的请求，可以使用通配符。也可以使用前缀 - 排除特定主机名，如 -*.example.com。iOS系统和某些应用有严格的安全策略，仅信任某些特定的证书，对这些域名启动解密可能导致问题，如 *.apple.com，*.icloud.com。
+  mitm:
+    # Google中国跳转
+    - g.cn
+    - '*.google.cn'
+
+    # Sub-Store
+    - "sub.store"
+
+    # BoxJS
+    - "boxjs.com"
+    - "boxjs.net"
+    - "*.boxjs.com"
+    - "*.boxjs.net"
+
+
+  # 使用 JavaScript 脚本改写 HTTP(S) 请求
+  script:
+    # Sub-Store
+    - match: ^https?:\/\/sub\.store
+      name: SubStore
+      type: request
+      require-body: true
+      timeout: 120
+
+    # BoxJS
+    - match: ^https?:\/\/(.+\.)?boxjs\.(com|net)
+      name: BoxJs
+      type: request
+      require-body: true
+      timeout: 120
+
+  # HTTP(S) 重写，支持 header、302、307、reject 多种策略
+  url-rewrite:
+    # Google中国跳转
+    - ^https?://(www.)?(g|google).cn https://www.google.com 302
+    - ^https?:\/\/(ditu|maps).google\.cn https://maps.google.com 302
+
+
+# 代理组配置
+proxy-groups:
+  # 选取策略组
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/KittyLink.png
+    name: 节点选择
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Select.png
+    include-all: true
+    name: 手动切换
+    type: select
+
+  # 自动策略组
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Auto_Speed.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 自动选择
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+
+  # 应用策略组
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/Telegram.png
+    name: 电报消息
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/YouTube.png
+    name: 油管视频
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Netflix.png
+    name: 奈飞视频
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Video.png
+    name: 巴哈姆特
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/BiliBili.png
+    name: 哔哩哔哩
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/StreamingSE.png
+    name: 国外媒体
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Streaming.png
+    name: 国内媒体
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Google_Suite/Google.png
+    name: 谷歌FCM
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/SoundCloud.png
+    name: 微软Bing
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/SoundCloud.png
+    name: 微软云盘
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Microsoft.png
+    name: 微软服务
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/Apple.png
+    name: 苹果服务
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Steam.png
+    name: 游戏平台
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/SoundCloud.png
+    name: Xbox
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/SoundCloud.png
+    name: Spotify
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/SoundCloud.png
+    name: OpenAI
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 全球直连
+    type: select
+
+  # 直连策略组
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/Air_Bnb.png
+    name: 全球直连
+    proxies:
+      - DIRECT
+      - 手动切换
+    type: select
+
+  # 拦截策略组
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Reject.png
+    name: 全球拦截
+    proxies:
+      - REJECT
+      - DIRECT
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/Badoo.png
+    name: 应用净化
+    proxies:
+      - REJECT
+      - DIRECT
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Reject.orig.png
+    name: 隐私防护
+    proxies:
+      - REJECT
+      - DIRECT
+    type: select
+
+  # 漏网之鱼
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Universal/Final.png
+    name: 漏网之鱼
+    proxies:
+      - 手动切换
+      - 自动选择
+      - 香港
+      - 台湾
+      - 日本
+      - 新加坡
+      - 韩国
+      - 美国
+      - 英国
+      - 低倍率
+      - 全球直连
+    type: select
+
+
+  # 地区策略组
+  - filter: "^(?=.*(🇭🇰|香港|虚通|(?i)HK|Hong))(?!.*(回国|校园|游戏|教育|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/Hong_Kong.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 香港
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*(🇹🇼|台|(?i)TW|Tai))(?!.*(回国|校园|游戏|教育|久虚|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/Taiwan.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 台湾
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*((?i) 🇯🇵|日本|川日|东京|大阪|泉日|埼玉|JP|Japan))(?!.*((?i)回国|校园|游戏|教育|久虚|GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/Japan.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 日本
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*(🇰🇷|韩|韓|首尔|(?i)KR|Korea))(?!.*(回国|校园|游戏|教育|久虚|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/South_Korea.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 韩国
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*(🇺🇸|美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|(?i)US|United States))(?!.*(回国|校园|游戏|教育|久虚|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/United_States.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 美国
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*(🇬🇧|英|伦敦|(?i)UK|United Kingdom))(?!.*(回国|校园|游戏|教育|久虚|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/United_Kingdom.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 英国
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*(🇸🇬|新加坡|狮|(?i)SG|Singapore))(?!.*(回国|校园|游戏|教育|久虚|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/Singapore.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 新加坡
+    type: url-test
+    url: http://www.apple.com/library/test/success.html
+  - filter: "^(?=.*(🇬🇧|低倍率|实验性|0.2|0.3|0.5))(?!.*(回国|校园|游戏|教育|久虚|(?i)GAME|IPV6)).*$"
+    icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Rounded_Rectangle/Singapore.png
+    include-all: true
+    interval: 300
+    lazy: true
+    name: 低倍率
+    type: select
+    
+# 规则集
+rule-providers:
+  # 去广告
+  Advertising:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Advertising.list
+
+  # 小米
+  XiaoMi:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/XiaoMi/XiaoMi.list
+
+  # 微信
+  WeChat:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/WeChat/WeChat.list
+
+  # 直连emby
+  cnemby:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/chensmz/-/refs/heads/main/cnemby.list
+  
+  # OpenAi
+  Gemini:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.list
+
+  # OpenAi
+  OpenAi:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/OpenAI/OpenAI.list
+
+  # 微软Bing
+  微软Bing:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Bing.list
+
+  # Spotify
+  Spotify:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Spotify/Spotify.list
+    
+  # Xbox
+  Xbox:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Xbox/Xbox.list
+
+  # 苹果服务
+  Apple:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Apple/Apple.list
+
+  # 巴哈姆特
+  Bahamut:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Bahamut.list
+
+  # 广告拦截
+  BanAD:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list
+  BanEasyList:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanEasyList.list
+  BanEasyListChina:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanEasyListChina.list
+
+  # 隐私防护
+  BanEasyPrivacy:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanEasyPrivacy.list
+
+  # 应用净化
+  BanProgramAD:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list
+
+  # 哔哩哔哩
+  Bilibili:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Bilibili.list
+  BilibiliHMT:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/BilibiliHMT.list
+
+  # 中国ASN
+  China-ASN:
+    behavior: classical
+    interval: 86400
+    url: https://gitlab.com/lodepuly/vpn_tool/-/raw/main/Tool/Loon/Rule/ChinaASN.list
+
+  # 中国公司IP
+  ChinaCompanyIp:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list
+
+  # 中国域名
+  ChinaDomain:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list
+
+  # 中国IP
+  ChinaIp:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaIp.list
+
+  # 国内媒体
+  ChinaMedia:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaMedia.list
+
+  # 下载直连
+  Download:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Download.list
+
+  # Epic
+  Epic:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Epic.list
+
+  # GFW代理
+  GFW-Proxy:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyGFWlist.list
+
+  # 谷歌FCM
+  GoogleFCM:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/GoogleFCM.list
+
+  # 本地网络直连
+  LocalAreaNetwork:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list
+
+  # 微软服务
+  Microsoft:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Microsoft.list
+
+  # 网易云音乐
+  NetEaseMusic:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/NetEaseMusic.list
+
+  # 奈飞视频
+  Netflix:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Netflix.list
+
+  # Nintendo
+  Nintendo:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Nintendo.list
+
+  # 微软云盘
+  OneDrive:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/OneDrive.list
+
+  # Origin
+  Origin:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Origin.list
+
+  # 国外媒体
+  ProxyMedia:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list
+
+  # Sony
+  Sony:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Sony.list
+
+  # Steam
+  Steam:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Steam.list
+
+  # 电报消息
+  Telegram:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Telegram.list
+
+  # UnBan
+  UnBreak:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list
+
+  # 油管视频
+  YouTube:
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTube.list
+
+# 分流策略
+rules:
+  - RULE-SET,XiaoMi,全球直连
+  - RULE-SET,WeChat,全球直连
+  - RULE-SET,cnemby,全球直连
+  - RULE-SET,Gemini,OpenAi
+  - RULE-SET,OpenAi,OpenAi
+  - RULE-SET,微软Bing,微软Bing
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,Xbox,Xbox
+  - RULE-SET,Download,全球直连
+  - RULE-SET,ChinaCompanyIp,全球直连
+  - RULE-SET,ChinaDomain,全球直连
+  - RULE-SET,ChinaIp,全球直连
+  - RULE-SET,ProxyMedia,国外媒体
+  - RULE-SET,ChinaMedia,国内媒体
+  - RULE-SET,NetEaseMusic,国内媒体
+  - RULE-SET,Bilibili,哔哩哔哩
+  - RULE-SET,BilibiliHMT,哔哩哔哩
+  - RULE-SET,Bahamut,巴哈姆特
+  - RULE-SET,Netflix,奈飞视频
+  - RULE-SET,YouTube,油管视频
+  - RULE-SET,Nintendo,游戏平台
+  - RULE-SET,Steam,游戏平台
+  - RULE-SET,Sony,游戏平台
+  - RULE-SET,Origin,游戏平台
+  - RULE-SET,Epic,游戏平台
+  - RULE-SET,Telegram,电报消息
+  - RULE-SET,Apple,苹果服务
+  - RULE-SET,Microsoft,微软服务
+  - RULE-SET,OneDrive,微软云盘
+  - RULE-SET,GoogleFCM,谷歌FCM
+  - RULE-SET,BanEasyPrivacy,隐私防护
+  - RULE-SET,BanAD,全球拦截
+  - RULE-SET,BanEasyListChina,全球拦截
+  - RULE-SET,BanEasyList,全球拦截
+  - RULE-SET,Advertising,全球拦截
+  - RULE-SET,BanProgramAD,应用净化
+  - RULE-SET,UnBreak,全球直连
+  - RULE-SET,GFW-Proxy,节点选择
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,0.0.0.0/8,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,169.254.0.0/16,DIRECT
+  - IP-CIDR,192.0.0.0/24,DIRECT
+  - IP-CIDR,192.0.2.0/24,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,224.0.0.0/4,DIRECT
+  - IP-CIDR6,::1/128,DIRECT
+  - IP-CIDR6,fc00::/7,DIRECT
+  - IP-CIDR6,fe80::/10,DIRECT
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - RULE-SET,China-ASN,全球直连
+  - DOMAIN,api.cupid.dns.iqiyi.com,REJECT
+  - DOMAIN,video-ad.sm.cn,REJECT
+  - DOMAIN-SUFFIX,cupid.iqiyi.com,REJECT
+  - SCRIPT,quic,REJECT
+  - GEOIP,CN,全球直连
+  - MATCH,漏网之鱼
+
+# 脚本规则
+script:
+  shortcuts:
+    quic: network == 'udp' and (dst_port == 443 or dst_port == 4483 or dst_port ==
+      9305)
+
+# 远程脚本集
+script-providers:
+  # Sub-Store
+  SubStore:
+    url: https://raw.githubusercontent.com/Peng-YM/Sub-Store/master/backend/sub-store.min.js
+    interval: 86400
+
+  # BoxJs
+  BoxJs:
+    url: https://raw.githubusercontent.com/chavyleung/scripts/master/box/chavy.boxjs.js
+    interval: 86400
+
+  # 网络信息面板
+  "网络信息":
+    url: "https://raw.githubusercontent.com/xream/scripts/main/surge/modules/network-info/index.js"
+    interval: 86400
+
+  # IP信息面板
+  IPCheck-Tile:
+    url: https://raw.githubusercontent.com/StevenKwan/stash-waffle/main/tiles/ipcheck.js
+    interval: 86400
+
+  # 流媒体信息面板
+  Stream-Tile:
+    url: https://raw.githubusercontent.com/StevenKwan/stash-waffle/main/tiles/stream.js
+    interval: 86400
+
+  # 机场流量信息面板
+  sub_info-Tile:
+    url: https://raw.githubusercontent.com/Coldvvater/Mononoke/master/Script/sub_info.js
+    interval: 86400
+
+# Tile面板
+tiles:
+  # 网络信息
+  - name: "网络信息"
+    interval: 300
+    title: "网络信息"
+    content: "..."
+    # argument: "icon=antenna.radiowaves.left.and.right.circle.fill&backgroundColor=#178BD8"
+    icon: "antenna.radiowaves.left.and.right.circle.fill"
+    backgroundColor: "#178BD8"
+
+  # IP信息
+  - name: IPCheck-Tile
+    interval: 7200
+
+  # 流媒体信息
+  - name: Stream-Tile
+    interval: 7200
+
+  # 机场流量信息
+  - name: sub_info-Tile
+    interval: 3600
+    title: 'sample'
+    content: ''
+    icon: 'airplane.departure'
+    backgroundColor: '#009944'
+    argument: ''
