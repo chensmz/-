@@ -8,6 +8,7 @@ DOMAIN-SUFFIX,theater.makima.online
 DOMAIN-SUFFIX,anime.makima.online
 DOMAIN-SUFFIX,restrict.makima.online
 DOMAIN-SUFFIX,celluloid.makima.online
-DOMAIN-SUFFIX,cdn.jiashule.com
-DOMAIN-SUFFIX,zjxf119
-DOMAIN-SUFFIX,zj96596
+DOMAIN-KEYWORD,jiashule.com
+DOMAIN-KEYWORD,zjxf119
+DOMAIN-KEYWORD,zj96596
+DOMAIN-KEYWORD,cdn
