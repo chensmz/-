@@ -9,3 +9,9 @@ DOMAIN-SUFFIX,cf.lilyemby.my
 DOMAIN-SUFFIX,lite.cn2gias.uk 
 DOMAIN-SUFFIX,misty.cx 
 DOMAIN-SUFFIX,cloudflare.v50.su
+DOMAIN-SUFFIX,apple-relay.cloudflare.com
+DOMAIN-SUFFIX,gateway.icloud.com,美国
+DOMAIN-SUFFIX,guzzoni.apple.com,美国
+DOMAIN-SUFFIX,cp4.cloudflare.com,美国
+DOMAIN-SUFFIX,gspe1-ssl.ls.apple.com,美国
+DOMAIN-SUFFIX,apps.mzstatic.com,美国
